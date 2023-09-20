@@ -7,20 +7,29 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.facebook.react.PackageList
+import com.facebook.react.ReactFragment
+import com.facebook.react.ReactInstanceManager
+import com.facebook.react.ReactRootView
+import com.facebook.react.common.LifecycleState
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler
+import com.facebook.soloader.SoLoader
 import com.yangtopia.d3m.databinding.ActivityMainBinding
+import com.yangtopia.d3m.ui.home.HomeFragment
 
 class MainActivity : AppCompatActivity(), DefaultHardwareBackBtnHandler {
+//    private lateinit var reactInstanceManager: ReactInstanceManager
+//    private lateinit var reactRootView: ReactRootView
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+//        SoLoader.init(this, false)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val navView: BottomNavigationView = binding.navView
-
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         // Passing each menu ID as a set of Ids because each
@@ -40,5 +49,4 @@ class MainActivity : AppCompatActivity(), DefaultHardwareBackBtnHandler {
     override fun invokeDefaultOnBackPressed() {
         super.onBackPressed();
     }
-
 }

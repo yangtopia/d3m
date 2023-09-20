@@ -4,7 +4,7 @@ import {AppRegistry, StyleSheet, Text, View} from 'react-native';
 const HomeApp = () => {
     return (
         <View style={styles.container}>
-            <Text style={styles.hello}>Hello, World! This is Home!</Text>
+            <Text style={styles.hello}>여기는 React Native!!</Text>
         </View>
     );
 };

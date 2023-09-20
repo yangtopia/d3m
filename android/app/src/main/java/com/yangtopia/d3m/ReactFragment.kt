@@ -6,25 +6,42 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.facebook.react.PackageList
 import com.facebook.react.ReactInstanceManager
 import com.facebook.react.ReactRootView
+import com.facebook.react.common.LifecycleState
 
 
 abstract class ReactFragment : Fragment() {
     private lateinit var reactRootView: ReactRootView
     private lateinit var reactInstanceManager: ReactInstanceManager
-    private lateinit var bundle: Bundle
+//    private var bundle: Bundle? = null
 
-    abstract fun getMainComponentName(): String
+    abstract fun getModuleName(): String
 
-    fun setReactInstanceManager(reactInstanceManager: ReactInstanceManager, bundle: Bundle) {
-        this.reactInstanceManager = reactInstanceManager
-        this.bundle = bundle
+//    fun setReactInstanceManager(reactInstanceManager: ReactInstanceManager, bundle: Bundle?) {
+//        this.reactInstanceManager = reactInstanceManager
+//        this.bundle = bundle
+//    }
+
+    override fun onDetach() {
+        super.onDetach()
+        reactRootView?.unmountReactApplication();
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        reactRootView = ReactRootView(context)
+        val packages = PackageList(activity?.application).packages
+
+        reactInstanceManager = ReactInstanceManager.builder()
+            .setApplication(activity?.application)
+            .setCurrentActivity(activity)
+            .setBundleAssetName("index.android.bundle")
+            .setJSMainModulePath("index")
+            .addPackages(packages)
+            .setUseDeveloperSupport(BuildConfig.DEBUG)
+            .setInitialLifecycleState(LifecycleState.BEFORE_RESUME)
+            .build();
     }
 
     override fun onCreateView(
@@ -33,13 +50,24 @@ abstract class ReactFragment : Fragment() {
         savedInstanceState: Bundle?
     ): ReactRootView {
         super.onCreateView(inflater, container, savedInstanceState)
-        return reactRootView
+        reactRootView = ReactRootView(requireActivity())
 
+        reactRootView.startReactApplication(
+            reactInstanceManager,
+            getModuleName(),
+            savedInstanceState
+        )
+
+        return reactRootView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        reactRootView.startReactApplication(reactInstanceManager, getMainComponentName(), bundle)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        reactRootView?.unmountReactApplication();
     }
 
 }
